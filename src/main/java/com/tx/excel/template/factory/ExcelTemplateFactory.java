@@ -1,5 +1,7 @@
-package com.tx.excel.template;
+package com.tx.excel.template.factory;
 
+import com.tx.excel.template.exception.ExcelTemplateException;
+import com.tx.excel.template.poi.ExcelCellFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;

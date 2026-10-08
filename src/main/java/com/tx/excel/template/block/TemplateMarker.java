@@ -1,4 +1,4 @@
-package com.tx.excel.template;
+package com.tx.excel.template.block;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,28 +7,28 @@ import java.util.regex.Pattern;
  * A visible block command occupying a whole cell: {@code {{#each path}}}, {@code {{#if path}}},
  * {@code {{/each}}}, or {@code {{/if}}}.
  */
-record TemplateMarker(Kind kind, String path, int row, int column) {
+public record TemplateMarker(Kind kind, String path, int row, int column) {
 
     private static final Pattern OPEN = Pattern.compile(
             "^\\{\\{\\s*#(each|if)\\s+([A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*)\\s*}}$");
     private static final Pattern CLOSE = Pattern.compile("^\\{\\{\\s*/(each|if)\\s*}}$");
 
-    enum Kind {
+    public enum Kind {
         EACH_OPEN,
         IF_OPEN,
         EACH_CLOSE,
         IF_CLOSE
     }
 
-    boolean isOpen() {
+    public boolean isOpen() {
         return kind == Kind.EACH_OPEN || kind == Kind.IF_OPEN;
     }
 
-    boolean isEach() {
+    public boolean isEach() {
         return kind == Kind.EACH_OPEN || kind == Kind.EACH_CLOSE;
     }
 
-    static TemplateMarker parse(String text, int row, int column) {
+    public static TemplateMarker parse(String text, int row, int column) {
         if (text == null) {
             return null;
         }

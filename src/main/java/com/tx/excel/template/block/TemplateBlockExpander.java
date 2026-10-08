@@ -1,5 +1,7 @@
-package com.tx.excel.template;
+package com.tx.excel.template.block;
 
+import com.tx.excel.template.data.ExcelTemplateData;
+import com.tx.excel.template.poi.PlaceholderRenderer;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -7,13 +9,18 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-final class TemplateBlockExpander {
+public final class TemplateBlockExpander {
 
     private TemplateBlockExpander() {
     }
 
-    static void expand(Sheet sheet, ExcelTemplateData data) {
+    public static void expand(Sheet sheet, ExcelTemplateData data) {
         expandChildren(sheet, TemplateBlockParser.parse(sheet), data);
+    }
+
+    /** True when the row contains a {@code #each} / {@code #if} block marker cell. */
+    public static boolean rowHasBlockMarker(org.apache.poi.ss.usermodel.Row row) {
+        return TemplateBlockParser.markerInRow(row) != null;
     }
 
     static int expandChildren(Sheet sheet, List<TemplateBlock> blocks, ExcelTemplateData data) {
@@ -102,7 +109,7 @@ final class TemplateBlockExpander {
 
     private static void fillRows(Sheet sheet, int fromRow, int toRow, ExcelTemplateData data) {
         for (int r = fromRow; r <= toRow; r++) {
-            ExcelTemplateEngine.fillRow(sheet.getRow(r), data);
+            PlaceholderRenderer.fillRow(sheet.getRow(r), data);
         }
     }
 
@@ -114,7 +121,7 @@ final class TemplateBlockExpander {
             if (source == null) {
                 continue;
             }
-            ExcelTemplateEngine.copyRow(sheet, source, r + offset);
+            PlaceholderRenderer.copyRow(sheet, source, r + offset);
         }
         for (CellRangeAddress region : merges) {
             sheet.addMergedRegion(new CellRangeAddress(

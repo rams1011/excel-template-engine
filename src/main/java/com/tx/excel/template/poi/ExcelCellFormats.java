@@ -1,4 +1,4 @@
-package com.tx.excel.template;
+package com.tx.excel.template.poi;
 
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-final class ExcelCellFormats {
+public final class ExcelCellFormats {
 
     private ExcelCellFormats() {
     }
 
-    static boolean isText(CellStyle style) {
+    public static boolean isText(CellStyle style) {
         if (style == null) {
             return false;
         }
@@ -32,14 +32,14 @@ final class ExcelCellFormats {
                 || BuiltinFormats.getBuiltinFormat(49).equals(trimmed);
     }
 
-    static boolean isDate(CellStyle style) {
+    public static boolean isDate(CellStyle style) {
         if (style == null) {
             return false;
         }
         return DateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString());
     }
 
-    static boolean isNumeric(CellStyle style) {
+    public static boolean isNumeric(CellStyle style) {
         if (style == null || isText(style) || isDate(style)) {
             return false;
         }
@@ -50,7 +50,7 @@ final class ExcelCellFormats {
         return format.contains("0") || format.contains("#");
     }
 
-    static String stringify(Object value) {
+    public static String stringify(Object value) {
         if (value == null) {
             return "";
         }
@@ -60,7 +60,7 @@ final class ExcelCellFormats {
         return String.valueOf(value);
     }
 
-    static Date toDate(Object value) {
+    public static Date toDate(Object value) {
         if (value instanceof Date date) {
             return date;
         }
@@ -76,7 +76,7 @@ final class ExcelCellFormats {
         return null;
     }
 
-    static Double toNumber(Object value) {
+    public static Double toNumber(Object value) {
         if (value instanceof Number number) {
             return number.doubleValue();
         }
@@ -94,7 +94,7 @@ final class ExcelCellFormats {
         return null;
     }
 
-    static Object readTyped(Cell cell) {
+    public static Object readTyped(Cell cell) {
         if (cell == null) {
             return null;
         }

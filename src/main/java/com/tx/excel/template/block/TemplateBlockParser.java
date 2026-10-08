@@ -1,5 +1,7 @@
-package com.tx.excel.template;
+package com.tx.excel.template.block;
 
+import com.tx.excel.template.exception.ExcelTemplateException;
+import com.tx.excel.template.poi.PlaceholderRenderer;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -33,7 +35,7 @@ final class TemplateBlockParser {
         }
         for (Cell cell : row) {
             TemplateMarker marker = TemplateMarker.parse(
-                    ExcelTemplateEngine.cellText(cell), row.getRowNum(), cell.getColumnIndex());
+                    PlaceholderRenderer.cellText(cell), row.getRowNum(), cell.getColumnIndex());
             if (marker != null) {
                 return marker;
             }

@@ -1,4 +1,4 @@
-package com.tx.excel.template;
+package com.tx.excel.template.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,15 +6,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-final class ExcelTemplateData {
+public final class ExcelTemplateData {
 
     private final Map<String, Object> values;
 
-    ExcelTemplateData(Map<String, ?> values) {
+    public ExcelTemplateData(Map<String, ?> values) {
         this.values = values == null ? Map.of() : new LinkedHashMap<>(values);
     }
 
-    Object get(String path) {
+    public Object get(String path) {
         if (path == null || path.isBlank()) {
             return null;
         }
@@ -28,28 +28,28 @@ final class ExcelTemplateData {
         return current;
     }
 
-    boolean isTable(String path) {
+    public boolean isTable(String path) {
         String root = rootKey(path);
         return root != null && isList(values.get(root));
     }
 
-    String tableKey(String path) {
+    public String tableKey(String path) {
         return isTable(path) ? rootKey(path) : null;
     }
 
-    List<?> tableRows(String listKey) {
+    public List<?> tableRows(String listKey) {
         return listAt(listKey);
     }
 
-    List<?> listAt(String path) {
+    public List<?> listAt(String path) {
         return asList(get(path));
     }
 
-    boolean isTruthy(String path) {
+    public boolean isTruthy(String path) {
         return isTruthyValue(get(path));
     }
 
-    static boolean isTruthyValue(Object value) {
+    public static boolean isTruthyValue(Object value) {
         if (value == null) {
             return false;
         }
@@ -69,7 +69,7 @@ final class ExcelTemplateData {
         return true;
     }
 
-    ExcelTemplateData forTableRow(String listKey, Object item) {
+    public ExcelTemplateData forTableRow(String listKey, Object item) {
         Map<String, Object> next = new LinkedHashMap<>(values);
         next.put(listKey, item);
         if (item instanceof Map<?, ?> map) {
@@ -104,7 +104,7 @@ final class ExcelTemplateData {
         return dot < 0 ? path : path.substring(0, dot);
     }
 
-    static boolean isList(Object value) {
+    public static boolean isList(Object value) {
         return value instanceof Collection<?> || value instanceof Object[];
     }
 

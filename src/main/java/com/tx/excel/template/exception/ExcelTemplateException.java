@@ -1,4 +1,4 @@
-package com.tx.excel.template;
+package com.tx.excel.template.exception;
 
 public class ExcelTemplateException extends RuntimeException {
 

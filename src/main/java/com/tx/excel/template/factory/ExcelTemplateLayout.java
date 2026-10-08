@@ -1,4 +1,4 @@
-package com.tx.excel.template;
+package com.tx.excel.template.factory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +41,6 @@ public final class ExcelTemplateLayout {
         return tableKey;
     }
 
-    record HeaderCell(int row, int column, String key) {
+    public record HeaderCell(int row, int column, String key) {
     }
 }
