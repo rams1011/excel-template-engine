@@ -89,6 +89,7 @@ public final class ExcelTemplateFactory {
         return keys;
     }
 
+    /** Turns a column title like {@code "Policy Number"} into {@code policyNumber} for map keys. */
     static String columnKey(String header) {
         String cleaned = header == null ? "" : header.replaceAll("[^A-Za-z0-9]+", " ").trim();
         if (cleaned.isEmpty()) {
@@ -123,6 +124,7 @@ public final class ExcelTemplateFactory {
         }
     }
 
+    /** Leaves one data row so {@link com.tx.excel.template.ExcelTemplateEngine} can expand the list at render time. */
     private static void trimTableRows(Sheet sheet, int firstDataRow) {
         if (firstDataRow < 0) {
             return;

@@ -13,11 +13,16 @@ public final class ExcelTemplateLayout {
     private int firstDataRow = -1;
     private String tableKey = "rows";
 
+    /** Registers a scalar cell that will become {@code {{key}}} in the generated template. */
     public ExcelTemplateLayout header(int row, int column, String key) {
         headers.add(new HeaderCell(row, column, key));
         return this;
     }
 
+    /**
+     * Defines a repeating table: {@code columnHeaderRow} supplies human labels (converted to camelCase
+     * field keys), {@code firstDataRow} is the single prototype row kept in the template.
+     */
     public ExcelTemplateLayout table(int columnHeaderRow, int firstDataRow, String tableKey) {
         this.columnHeaderRow = columnHeaderRow;
         this.firstDataRow = firstDataRow;

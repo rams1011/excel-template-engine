@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+/**
+ * Scans the sheet top-to-bottom for whole-cell block markers and builds a nested block tree.
+ * At most one marker cell per row is considered; mismatched open/close pairs fail fast.
+ */
 final class TemplateBlockParser {
 
     private TemplateBlockParser() {
@@ -57,6 +61,7 @@ final class TemplateBlockParser {
         return markers;
     }
 
+    /** Stack-based pairing of open/close markers; nested blocks attach to the innermost open frame. */
     private static List<TemplateBlock> tree(List<TemplateMarker> markers) {
         List<TemplateBlock> roots = new ArrayList<>();
         Deque<Frame> stack = new ArrayDeque<>();

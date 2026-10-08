@@ -28,6 +28,7 @@ public record TemplateMarker(Kind kind, String path, int row, int column) {
         return kind == Kind.EACH_OPEN || kind == Kind.EACH_CLOSE;
     }
 
+    /** Returns a marker when {@code text} is exactly one block command (after trim); otherwise {@code null}. */
     public static TemplateMarker parse(String text, int row, int column) {
         if (text == null) {
             return null;

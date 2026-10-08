@@ -9,6 +9,10 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Expands {@code #each} and {@code #if} blocks by copying or deleting rows and removing marker rows
+ * from the output. Sibling blocks are processed bottom-up so row indices remain stable.
+ */
 public final class TemplateBlockExpander {
 
     private TemplateBlockExpander() {
@@ -23,6 +27,7 @@ public final class TemplateBlockExpander {
         return TemplateBlockParser.markerInRow(row) != null;
     }
 
+    /** Returns net row count change after expanding all blocks (used when nesting inside {@code #each}). */
     static int expandChildren(Sheet sheet, List<TemplateBlock> blocks, ExcelTemplateData data) {
         int totalDelta = 0;
         for (int i = blocks.size() - 1; i >= 0; i--) {
@@ -52,6 +57,7 @@ public final class TemplateBlockExpander {
             return -originalSpan;
         }
 
+        // Remove close marker first; body rows are copied once per list item.
         deleteRows(sheet, close, close);
 
         int extra = items.size() - 1;
@@ -81,6 +87,7 @@ public final class TemplateBlockExpander {
         return items.size() * height + childDeltas - originalSpan;
     }
 
+    /** Keeps body rows when the path is truthy; otherwise deletes the entire block including markers. */
     private static int expandIf(Sheet sheet, TemplateBlock block, ExcelTemplateData data) {
         int open = block.openRow();
         int close = block.closeRow();
@@ -143,6 +150,7 @@ public final class TemplateBlockExpander {
         return merges;
     }
 
+    /** Removes merged regions overlapping the range, clears rows, then shifts rows below upward. */
     static void deleteRows(Sheet sheet, int first, int last) {
         if (first > last) {
             return;

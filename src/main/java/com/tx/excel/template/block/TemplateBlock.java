@@ -3,6 +3,11 @@ package com.tx.excel.template.block;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parsed region between an open marker row and its matching close row. {@link #bodyStart()} through
+ * {@link #bodyEnd()} are the template rows duplicated or removed during expansion; nested blocks
+ * are stored in {@link #children()}.
+ */
 final class TemplateBlock {
 
     enum Type {

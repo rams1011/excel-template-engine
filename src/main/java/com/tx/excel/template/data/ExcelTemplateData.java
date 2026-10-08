@@ -6,6 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Immutable view over the root {@link Map} passed to {@link com.tx.excel.template.ExcelTemplateEngine}.
+ * Map keys are matched case-insensitively at each path segment. List values drive simple table rows
+ * and {@code #each} blocks; {@link #forTableRow} overlays one list element for placeholder resolution.
+ */
 public final class ExcelTemplateData {
 
     private final Map<String, Object> values;
@@ -14,6 +19,7 @@ public final class ExcelTemplateData {
         this.values = values == null ? Map.of() : new LinkedHashMap<>(values);
     }
 
+    /** Resolves {@code path} with dot notation; returns {@code null} if any segment is missing. */
     public Object get(String path) {
         if (path == null || path.isBlank()) {
             return null;
@@ -33,6 +39,7 @@ public final class ExcelTemplateData {
         return root != null && isList(values.get(root));
     }
 
+    /** Returns the list key when {@code path} refers to a field on a list (e.g. {@code items.name} → {@code items}). */
     public String tableKey(String path) {
         return isTable(path) ? rootKey(path) : null;
     }
@@ -49,6 +56,7 @@ public final class ExcelTemplateData {
         return isTruthyValue(get(path));
     }
 
+    /** Rules for {@code {{#if path}}}: non-null, non-empty collections, and common false string/number forms. */
     public static boolean isTruthyValue(Object value) {
         if (value == null) {
             return false;
@@ -69,6 +77,10 @@ public final class ExcelTemplateData {
         return true;
     }
 
+    /**
+     * Context for one expanded table or {@code #each} iteration: the list key points at the current
+     * item, and map fields are also promoted to top-level keys so {@code {{name}}} works inside the block.
+     */
     public ExcelTemplateData forTableRow(String listKey, Object item) {
         Map<String, Object> next = new LinkedHashMap<>(values);
         next.put(listKey, item);

@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Low-level cell and string substitution. When a cell contains exactly one placeholder, typed values
+ * are written to match the cell's existing format; mixed text uses string replacement only.
+ */
 public final class PlaceholderRenderer {
 
     private static final Pattern PLACEHOLDER = Pattern.compile(
@@ -36,6 +40,7 @@ public final class PlaceholderRenderer {
         }
     }
 
+    /** Deep-copies cell values, formulas, and styles from {@code source} into row {@code destIndex}. */
     public static void copyRow(Sheet sheet, Row source, int destIndex) {
         Row dest = sheet.getRow(destIndex);
         if (dest == null) {
@@ -92,6 +97,7 @@ public final class PlaceholderRenderer {
         }
     }
 
+    /** Inline substitution for headers/footers and cells with multiple placeholders; lists render as empty. */
     public static String replace(String text, ExcelTemplateData data) {
         if (text == null || text.isEmpty() || !text.contains("{{")) {
             return text;
@@ -107,6 +113,10 @@ public final class PlaceholderRenderer {
         return out.toString();
     }
 
+    /**
+     * Text used to find placeholders. Formulas return the formula string (not evaluated value) so
+     * {@code {{…}}} inside formulas can be rewritten before Excel recalculates.
+     */
     public static String cellText(Cell cell) {
         if (cell == null) {
             return null;
@@ -146,6 +156,7 @@ public final class PlaceholderRenderer {
         if (text == null || !text.contains("{{")) {
             return;
         }
+        // Whole-cell placeholder → preserve number/date format from the template cell.
         Matcher single = PLACEHOLDER.matcher(text);
         if (single.matches()) {
             setCellValue(cell, data.get(single.group(1)));

@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+/**
+ * Infers how to write a Java value into an existing styled cell (text vs date vs numeric).
+ * Used when the template cell already defines Excel number formats.
+ */
 public final class ExcelCellFormats {
 
     private ExcelCellFormats() {
@@ -19,6 +23,7 @@ public final class ExcelCellFormats {
         if (style == null) {
             return false;
         }
+        // Built-in "Text" format (@) — always stringify values.
         if (style.getDataFormat() == 49) {
             return true;
         }
@@ -94,6 +99,7 @@ public final class ExcelCellFormats {
         return null;
     }
 
+    /** Reads cell content for {@link com.tx.excel.template.factory.ExcelTemplateFactory} sample extraction. */
     public static Object readTyped(Cell cell) {
         if (cell == null) {
             return null;

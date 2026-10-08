@@ -39,6 +39,7 @@ public final class ExcelTemplateEngine {
     private ExcelTemplateEngine() {
     }
 
+    /** Renders {@code template} to {@code output}, creating parent directories if needed. */
     public static void render(Path template, Path output, Map<String, ?> data) {
         if (template == null || output == null) {
             throw new ExcelTemplateException("Excel template and output paths are required");
@@ -85,6 +86,10 @@ public final class ExcelTemplateEngine {
         return PlaceholderRenderer.cellText(cell);
     }
 
+    /**
+     * Per-sheet pipeline: print areas first, then row blocks (which insert/delete rows), then simple
+     * list tables (bottom-up so row indices stay valid), finally scalar placeholders on every row.
+     */
     private static void fillSheet(Sheet sheet, ExcelTemplateData data) {
         replaceHeaderFooter(sheet, data);
         TemplateBlockExpander.expand(sheet, data);
@@ -100,6 +105,7 @@ public final class ExcelTemplateEngine {
     private static void replaceHeaderFooter(Sheet sheet, ExcelTemplateData data) {
         replaceHeader(sheet.getHeader(), data);
         replaceFooter(sheet.getFooter(), data);
+        // XSSF supports alternate first/even page header and footer sections.
         if (sheet instanceof XSSFSheet xssf) {
             replaceHeader(xssf.getEvenHeader(), data);
             replaceHeader(xssf.getFirstHeader(), data);
@@ -137,6 +143,7 @@ public final class ExcelTemplateEngine {
         return tables;
     }
 
+    /** Detects a one-row table prototype: first placeholder whose root key is a list in {@code data}. */
     private static String tableKey(Row row, ExcelTemplateData data) {
         if (TemplateBlockExpander.rowHasBlockMarker(row)) {
             return null;
@@ -157,6 +164,7 @@ public final class ExcelTemplateEngine {
         return null;
     }
 
+    /** Duplicates the prototype row for each list element, then fills each copy with that item's context. */
     private static void expandTable(Sheet sheet, TableRow table, ExcelTemplateData data) {
         List<?> items = data.tableRows(table.listKey);
         Row prototype = sheet.getRow(table.rowIndex);
@@ -186,6 +194,7 @@ public final class ExcelTemplateEngine {
         }
     }
 
+    /** Simple table: one template row bound to a top-level list key. */
     private record TableRow(int rowIndex, String listKey) {
     }
 }
